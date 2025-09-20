@@ -17,7 +17,7 @@ class TripServiceTest extends TestCase
 
         $this->expectException(UserNotLoggedInException::class);
 
-        $sut->getTripsByUser($customer = new User(''));
+        $sut->getTripsByUser($friend = new User(''));
     }
 
     #[Test]
@@ -26,7 +26,7 @@ class TripServiceTest extends TestCase
         $loggedUser = new User('');
         $sut = new TripServiceTestable($loggedUser);
 
-        $actual = $sut->getTripsByUser($customer = new User(''));
+        $actual = $sut->getTripsByUser($friend = new User(''));
 
         $this->assertCount(0, $actual);
     }
@@ -35,12 +35,12 @@ class TripServiceTest extends TestCase
     public function find_trips_for_user_if_friend_of_logged_user(): void
     {
         $loggedUser = new User('');
-        $customer = new User('customer');
-        $customer->addFriend($loggedUser);
-        $customer->addTrip(new Trip());
+        $friend = new User('friend');
+        $friend->addFriend($loggedUser);
+        $friend->addTrip(new Trip());
         $sut = new TripServiceTestable($loggedUser);
 
-        $actual = $sut->getTripsByUser($customer);
+        $actual = $sut->getTripsByUser($friend);
 
         $this->assertCount(1, $actual);
     }
