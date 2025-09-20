@@ -1,25 +1,47 @@
 <?php
 
-namespace Test\TripServiceKata\Trip;
+namespace Test\Test\TripServiceKata\Trip;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use TripServiceKata\Trip\TripService;
+use TripServiceKata\Exception\UserNotLoggedInException;
+use TripServiceKata\Trip\Trip;
+use TripServiceKata\User\User;
 
 class TripServiceTest extends TestCase
 {
-    /**
-     * @var TripService
-     */
-    private TripService $tripService;
-
-    protected function setUp(): void
+    #[Test]
+    public function user_must_be_logged_in()
     {
-        $this->tripService = new TripService;
+        $sut = new TripServiceTestable(null);
+
+        $this->expectException(UserNotLoggedInException::class);
+
+        $sut->getTripsByUser($customer = new User(''));
     }
 
-    /** @test */
-    public function it_does_something()
+    #[Test]
+    public function user_with_no_friends_has_no_trips(): void
     {
-        $this->fail('This test has not been implemented yet.');
+        $loggedUser = new User('');
+        $sut = new TripServiceTestable($loggedUser);
+
+        $actual = $sut->getTripsByUser($customer = new User(''));
+
+        $this->assertCount(0, $actual);
+    }
+
+    #[Test]
+    public function find_trips_for_user_if_friend_of_logged_user(): void
+    {
+        $loggedUser = new User('');
+        $customer = new User('customer');
+        $customer->addFriend($loggedUser);
+        $customer->addTrip(new Trip());
+        $sut = new TripServiceTestable($loggedUser);
+
+        $actual = $sut->getTripsByUser($customer);
+
+        $this->assertCount(1, $actual);
     }
 }

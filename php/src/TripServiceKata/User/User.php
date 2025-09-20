@@ -39,4 +39,9 @@ class User
     {
         $this->trips[] = $trip;
     }
+
+    public function isFriendOf(User $user): bool
+    {
+        return in_array($this, $user->friends, true);
+    }
 }
