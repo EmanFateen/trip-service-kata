@@ -20,12 +20,7 @@ class TripService
             throw new UserNotLoggedInException();
         }
 
-        return $this->getTripsForLoggedUserFriend($user, $loggedUser);
-    }
-
-    public function getTripsForLoggedUserFriend(User $user, User $loggedUser): array
-    {
-        return $loggedUser->isFriendOf($user) ? $this->findTrips($user) : [];
+        return  $loggedUser->isFriendOf($user) ? $this->findTrips($user) : [];
     }
 
     protected function getLoggedUser(): ?User
